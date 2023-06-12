@@ -1,6 +1,8 @@
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Scanner;
@@ -22,6 +24,7 @@ public class Main {
             6. Listar Clientes
             7. Buscar cliente por documento identidad
             8. Realizar Reserva
+            9. Visualizar Reservas
             """;
         System.out.println(menu);
     }
@@ -174,33 +177,75 @@ public class Main {
                 }
                 case 8 -> {
                     System.out.println("REALIZAR RESERVA");
+
                     BufferedReader br4 = new BufferedReader(new InputStreamReader(System.in));
 
-                    System.out.println("Introduzca el identificador del cliente");
-                    int idCliente = Integer.parseInt(br4.readLine());
+                    System.out.println("Escriba el documento identidad del cliente");
+                    String nifCliente = br4.readLine();
+                    Cliente clienteReserva = null;
 
-                    Cliente clienteReserva = listadoClientes.get(idCliente - 1);
+                    for (Cliente cliente : listadoClientes) {
+                        if (cliente.getDNI().equalsIgnoreCase(nifCliente)) {
+                            clienteReserva = cliente;
+                            break;
+                        }
+                    }
 
-                    System.out.println("Introduzca el identificador del producto a reservar");
-                    int idProductoReserva = Integer.parseInt(br4.readLine());
+                    if (clienteReserva != null) {
+                        System.out.println("Escriba el ID del producto");
+                        int idProductoReserva = Integer.parseInt(br4.readLine());
+                        Producto productoReserva = null;
 
-                    Producto productoReserva = listadoProductos.get(idProductoReserva - 1);
+                        for (Producto producto : listadoProductos) {
+                            if (producto.getIdProducto() == idProductoReserva) {
+                                productoReserva = producto;
+                                break;
+                            }
+                        }
 
-                    Date fechaReserva = new Date();
+                        if (productoReserva != null) {
+                            System.out.println("Escriba la fecha de inicio de la reserva (dd/mm/yyyy)");
+                            String fechaInicioReservaString = br4.readLine();
+                            System.out.println("Escriba la fecha de fin de la reserva (dd/mm/yyyy)");
+                            String fechaFinReservaString = br4.readLine();
 
-                    int idReserva = listadoReservas.size() + 1;
-                    Reserva reserva = new Reserva(idReserva, clienteReserva, productoReserva, fechaReserva);
-                    listadoReservas.add(reserva);
+                            Date fechaInicioReserva = null;
+                            Date fechaFinReserva = null;
 
+                            try {
+                                fechaInicioReserva = new SimpleDateFormat("dd/MM/yyyy").parse(fechaInicioReservaString);
+                                fechaFinReserva = new SimpleDateFormat("dd/MM/yyyy").parse(fechaFinReservaString);
+                            } catch (ParseException e) {
+                                e.printStackTrace();
+                            }
 
-                    System.out.println("\nReserva realizada con éxito!");
+                            Reserva reserva = new Reserva(clienteReserva, productoReserva, fechaInicioReserva, fechaFinReserva);
+                            listadoReservas.add(reserva);
+
+                            System.out.println("Reserva realizada con éxito!");
+                        } else {
+                            System.out.println("No se encontró un producto con el ID especificado.");
+                        }
+                    } else {
+                        System.out.println("No se encontró un cliente con el documento identidad especificado.");
+                    }
                 }
-                default -> System.out.println("Opción inválida. Por favor, seleccione una opción válida.");
+                case 9 -> {
+                    System.out.println("VISUALIZAR RESERVAS");
+                    for (int i = 0; i < listadoReservas.size(); i++) {
+                        Reserva reserva = listadoReservas.get(i);
+                        System.out.println("\nReserva número " + (i + 1));
+                        System.out.println("Cliente: " + reserva.getCliente().getNombre() + " " + reserva.getCliente().getApellidos());
+                        System.out.println("Producto: " + reserva.getProducto().getNombreProducto());
+                        System.out.println("Fecha inicio: " + reserva.getFechaInicio());
+                        System.out.println("Fecha fin: " + reserva.getFechaFin());
+                    }
+                }
+                default -> System.out.println("Opción inválida.");
             }
 
             eleccion = Eleccion();
             LimpiarConsola();
-
         } while (eleccion != 0);
     }
 }

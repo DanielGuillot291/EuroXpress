@@ -1,16 +1,20 @@
 import java.util.Date;
 
 public class Reserva {
+    private static int ultimoIdReserva = 0;
+
     private int idReserva;
     private Cliente cliente;
     private Producto producto;
-    private Date fecha;
+    private Date fechaInicio;
+    private Date fechaFin;
 
-    public Reserva(int idReserva, Cliente cliente, Producto producto, Date fecha) {
-        this.idReserva = idReserva;
+    public Reserva(Cliente cliente, Producto producto, Date fechaInicio, Date fechaFin) {
+        this.idReserva = ++ultimoIdReserva;
         this.cliente = cliente;
         this.producto = producto;
-        this.fecha = fecha;
+        this.fechaInicio = fechaInicio;
+        this.fechaFin = fechaFin;
     }
 
     public int getIdReserva() {
@@ -37,11 +41,19 @@ public class Reserva {
         this.producto = producto;
     }
 
-    public Date getFecha() {
-        return fecha;
+    public Date getFechaInicio() {
+        return fechaInicio;
     }
 
-    public void setFecha(Date fecha) {
-        this.fecha = fecha;
+    public void setFechaInicio(Date fechaInicio) {
+        this.fechaInicio = fechaInicio;
+    }
+
+    public Date getFechaFin() {
+        return fechaFin;
+    }
+
+    public void setFechaFin(Date fechaFin) {
+        this.fechaFin = fechaFin;
     }
 }
